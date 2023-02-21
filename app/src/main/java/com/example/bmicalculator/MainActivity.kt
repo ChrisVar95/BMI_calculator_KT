@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bmicalculator.ui.theme.BMICalculatorTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,13 +38,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Bmi() {
-    var heightInput: String by remember { mutableStateOf("") }
-    var weightInput: String by remember { mutableStateOf("") }
-    val height = heightInput.toFloatOrNull() ?: 0.0f
-    val weight = weightInput.toFloatOrNull() ?: 0.0f
-    val bmi = if (weight > 0 && height > 0) weight / (height * height) else 0.0
-
+fun Bmi(bmiViewModel: BMIViewModel = viewModel()) {
     Column(
         modifier = Modifier.padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -60,8 +55,8 @@ fun Bmi() {
         )
         //Height
         OutlinedTextField(
-            value = heightInput,
-            onValueChange = {heightInput = it.replace(",",".")},
+            value = bmiViewModel.heightInput,
+            onValueChange = {bmiViewModel.changeHeightInput(it)},
             label = { Text(text = stringResource(R.string.text_field_bmi1_label))},
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -69,15 +64,15 @@ fun Bmi() {
         )
         //Weight
         OutlinedTextField(
-            value = weightInput,
-            onValueChange = {weightInput = it.replace(",",".")},
+            value = bmiViewModel.weightInput,
+            onValueChange = {bmiViewModel.changeWeightInput(it)},
             label = { Text(text = stringResource(R.string.text_field_bmi2_label))},
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
         //Output
-        Text(text = stringResource(R.string.bmi_output, String.format("%.2f",bmi).replace(',', '.')))
+        Text(text = stringResource(R.string.bmi_output, String.format("%.2f",bmiViewModel.bmi)))
     }
 }
 
